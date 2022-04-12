@@ -6,18 +6,21 @@ using UnityEngine.Events;
 using UnityEngine.Networking;
 using UnityEngine.UI;
 public class API : MonoBehaviour {
-    public InputField inputField;
-    string theName = null;
+    string theName;
+    public GameObject intputField;
     const string BundleFolder = "http://152.74.151.33/~fmorales/download/";
     //const string BundleFile = "AssetBundles";
-    const string ItemList = "http://152.74.151.33/~fmorales/download/ItemList.php";
-
+    const string ItemList = "http://152.74.151.33/~fmorales/download/ItemList.php?folder=";
+    string url = null;
     public void GetItemList(UnityAction<List<string>> callback) {
         StartCoroutine(GetItemListRoutine(callback));
     }
 
     IEnumerator GetItemListRoutine(UnityAction<List<string>> callback) {
-        UnityWebRequest www = UnityWebRequest.Get(ItemList);
+        theName = intputField.GetComponent<Text>().text;
+        url = ItemList + theName+"/";
+        Debug.Log(url);
+        UnityWebRequest www = UnityWebRequest.Get(url);
         yield return www.SendWebRequest();
 
         if (www.isNetworkError) {
@@ -27,19 +30,20 @@ public class API : MonoBehaviour {
             //split string by comma
             string[] items = rawText.Split(',');
             //remove empty values and convert to list
-            List<string> itemList = items.Where(x => !string.IsNullOrEmpty(x)).ToList();
+            List<string> url = items.Where(x => !string.IsNullOrEmpty(x)).ToList();
             //return list to caller
-            callback.Invoke(itemList);
+            callback.Invoke(url);
         }
     }
 
     public void GetBundleObject(string assetName, UnityAction<GameObject> callback, Transform bundleParent) {
-         theName = inputField.GetComponent<Text>().text;
-        StartCoroutine(GetDisplayBundleRoutine(assetName, callback, bundleParent, theName));
+        // theName = inputField.GetComponent<Text>().text;
+        StartCoroutine(GetDisplayBundleRoutine(assetName, callback, bundleParent));
     }
 
-    IEnumerator GetDisplayBundleRoutine(string assetName, UnityAction<GameObject> callback, Transform bundleParent, string theName) {
-
+    IEnumerator GetDisplayBundleRoutine(string assetName, UnityAction<GameObject> callback, Transform bundleParent) {
+        theName = intputField.GetComponent<Text>().text;
+        Debug.Log(theName);
         string bundleURL = BundleFolder+ theName + "/" + assetName + "-";
         Debug.Log(bundleURL);
         //append platform to asset bundle name

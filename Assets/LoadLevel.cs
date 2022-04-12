@@ -26,5 +26,9 @@ public class LoadLevel : MonoBehaviour
      {
          SceneManager.LoadScene("main");
      }
+     public void AssetView()
+     {
+         SceneManager.LoadScene("assetdownload");
+     }
  
 }
